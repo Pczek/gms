@@ -1,4 +1,6 @@
 #include "ofApp.h"
+#include "boost/utility.hpp"
+
 
 int prevPosX = 0;
 int prevPosY = 0;
@@ -19,6 +21,7 @@ void ofApp::setup(){
     ofColor colorTwo;
     c1.set(50,50,50);
     c2.set(100,100,100);
+    ofSetLineWidth(5.0f);
 }
 
 //--------------------------------------------------------------
@@ -36,15 +39,18 @@ void ofApp::update(){
 void ofApp::draw(){
     ofBackgroundGradient(c2, c1, OF_GRADIENT_CIRCULAR);
 
-    for (list<ofPoint>::const_iterator it = boxes.begin(); it != boxes.end(); ++it) {
-        if(delta<0)
-        ofSetColor(red, green, blue);
+    for (list<ofPoint>::const_iterator it = boost::next(boxes.begin()); it != boxes.end(); ++it) {
+        
+        if(delta<0){
+            ofSetColor(red, green, blue);
+        }
         ofFill();
-        ofDrawBox(it->x, it->y, 0, sizeBox, sizeBox, sizeBox);
-        ofDrawBox(ofGetWidth() - it->x, it->y, 0, sizeBox, sizeBox, sizeBox);
-        ofDrawBox(it->x, ofGetHeight() - it->y, 0, sizeBox, sizeBox, sizeBox);
-        ofDrawBox(ofGetWidth() - it->x, ofGetHeight() - it->y, 0, sizeBox, sizeBox, sizeBox);
-
+        
+        ofDrawLine(boost::prior(it)->x, boost::prior(it)->y, it->x, it->y);
+        
+        ofDrawLine(ofGetWidth() - boost::prior(it)->x, boost::prior(it)->y, ofGetWidth()- it->x, it->y);
+        ofDrawLine(boost::prior(it)->x, ofGetHeight() - boost::prior(it)->y, it->x,ofGetHeight() - it->y);
+        ofDrawLine(ofGetWidth() - boost::prior(it)->x, ofGetHeight() - boost::prior(it)->y, ofGetWidth() - it->x, ofGetHeight() -it->y);
     }
 }
 
@@ -61,7 +67,6 @@ void ofApp::touchDown(ofTouchEventArgs & touch){
 //--------------------------------------------------------------
 void ofApp::touchMoved(ofTouchEventArgs & touch){
     boxes.push_back(ofPoint(mouseX, mouseY));
-
 }
 
 //--------------------------------------------------------------
